@@ -1,0 +1,83 @@
+﻿@page "/Login"
+@using ScSoMeBlazorServer.Authentication;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<h3>Login</h3>
+<CascadingAuthenticationState>
+    <AuthorizeView>
+
+        <NotAuthorized>
+            <div class="form-group">
+                <label>User name:</label>
+                <input type="text" placeholder="Username" @bind-value="username" />
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" placeholder="Password" @bind-value="password" />
+            </div>
+
+
+
+            <div style="color:red">@errorMessage</div>
+
+
+            <a href="" @onclick="PerformLogin">
+                Login
+            </a>
+        </NotAuthorized>
+
+        <Authorized>
+            <a href="" @onclick="PerformLogout">
+                Logout
+            </a>
+        </Authorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+@code {
+    private string username;
+    private string password;
+    private string errorMessage;
+
+
+    private async Task PerformLogin()
+    {        
+        errorMessage = "";
+        try
+        {
+            await ((CustomAuthentication)AuthenticationStateProvider).ValidateLogin(username, password);
+            username = "";
+            password = "";
+            //NavigationManager.NavigateTo("/");
+
+            errorMessage = "Logged in!";
+
+
+
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+
+    private void PerformLogout()
+    {
+        username = "";
+        password = "";
+        errorMessage = "";
+
+        try
+        {
+            ((CustomAuthentication)AuthenticationStateProvider).Logout();
+            //NavigationManager.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+        }
+    }
+}
