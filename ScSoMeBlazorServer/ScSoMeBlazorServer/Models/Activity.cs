@@ -2,11 +2,11 @@
 {
     public class Activity
     {
-        public string Type { get; set; }
-        public string Action { get; set; }
-        public DateTime Date { get; set; }
-        public string AdditionalInfo { get; set; }
-        public string Username { get; set; }
+        public string type { get; set; }
+        public string action { get; set; }
+        public DateTime date { get; set; }
+        public string additionalInfo { get; set; }
+        public string username { get; set; }
 
     }
 }

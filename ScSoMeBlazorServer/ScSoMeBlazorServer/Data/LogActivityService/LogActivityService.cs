@@ -14,7 +14,7 @@ namespace ScSoMeBlazorServer.Data.LogActivityService
         }
         public async Task<List<Activity>> GetActivities(string user)
         {
-            string json = await client.getFromAPI($"/AllActivities?User={user}");
+            string json = await client.getFromAPI($"Activity/AllActivities?user={user}");
 
             return createList(json, user);
 
@@ -24,11 +24,11 @@ namespace ScSoMeBlazorServer.Data.LogActivityService
                 {
                     List<Activity>? list = JsonSerializer.Deserialize<List<Activity>>(json);
                     return list ?? new List<Activity> {new Activity{
-                    Type = "Empty",
-                    Action = "",
-                    Date = DateTime.Now,
-                    AdditionalInfo = "List returned empty",
-                    Username= user
+                    type = "Empty",
+                    action = "",
+                    date = DateTime.Now,
+                    additionalInfo = "List returned empty",
+                    username= user
                     
                 }
                 };
@@ -38,11 +38,11 @@ namespace ScSoMeBlazorServer.Data.LogActivityService
                     List<Activity> list = new List<Activity>();
                     list.Add(new Activity
                     {
-                        Type = "Error",
-                        Action = "",
-                        Date = DateTime.Now,
-                        AdditionalInfo = ex.Message,
-                        Username= user
+                        type = "Error",
+                        action = "",
+                        date = DateTime.Now,
+                        additionalInfo = ex.Message,
+                        username= user
                     });
                     return list;
 
@@ -52,7 +52,7 @@ namespace ScSoMeBlazorServer.Data.LogActivityService
 
         public async  Task<Activity> GetActivity(string user)
         {
-            string json = await client.getFromAPI($"/SingleActivity?User={user}");
+            string json = await client.getFromAPI($"Activity/LatestActivity?user={user}");
 
             return loadActivity(json, user);
 
@@ -63,22 +63,22 @@ namespace ScSoMeBlazorServer.Data.LogActivityService
                     Activity? activity = JsonSerializer.Deserialize<Activity>(json);
                     return activity ?? new Activity
                     {
-                    Type = "Empty",
-                    Action = "",
-                        Date = DateTime.Now,
-                    AdditionalInfo = "Activity returned empty",
-                    Username= user
+                    type = "Empty",
+                    action = "",
+                        date = DateTime.Now,
+                    additionalInfo = "Activity returned empty",
+                    username= user
                     };
                 }
                 catch (Exception ex)
                 {
                     Activity activity = new Activity
                     {
-                        Type = "Error",
-                        Action = "",
-                        Date = DateTime.Now,
-                        AdditionalInfo = ex.Message,
-                        Username= user
+                        type = "Error",
+                        action = "",
+                        date = DateTime.Now,
+                        additionalInfo = ex.Message,
+                        username= user
 
                     };
                     return activity;
@@ -89,7 +89,7 @@ namespace ScSoMeBlazorServer.Data.LogActivityService
 
         public async Task LogActivity(Activity activity,string user)
         {
-            await client.postToAPI($"/LogActivity?user={user}", activity);
+            await client.postToAPI($"Activity/LogActivity?user={user}", activity);
         }
     }
 }
