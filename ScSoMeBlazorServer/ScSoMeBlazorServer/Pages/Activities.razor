@@ -1,0 +1,73 @@
+﻿@page "/activities"
+@using ScSoMeBlazorServer.Data.LogActivityService;
+@using ScSoMeBlazorServer.Models;
+@inject HttpClient client;
+@inject ILogActivityService ActivityService
+
+<PageTitle>Activities</PageTitle>
+
+<h1>Activities</h1>
+@if (activities == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="container paddingRemove">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>My Activities</h3>
+            </div>
+        </div>
+        <div class="row border-bottom border-dark rowStyle">
+            <div class="col-md-2 font-weight-bold">Type</div>
+            <div class="col-md-2 font-weight-bold">Action</div>
+            <div class="col-md-2 font-weight-bold">Date</div>
+            <div class="col-md-4 font-weight-bold">Additional Info</div>
+        </div>
+        @foreach (Activity activity in activities)
+        {
+            <div class="row border-bottom border-dark">
+                <div class="col-md-2">
+                    <div>@activity.type</div>
+                </div>
+                <div class="col-md-2">
+                    <div>@activity.action</div>
+                </div>
+
+                <div class="col-md-2">
+                    <div>@activity.date</div>
+                </div>
+
+                <div class="col-md-4">
+                    <div>@activity.additionalInfo</div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@code {
+    List<Activity> activities;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        activities = await ActivityService.GetActivities("abc");//TODO: Add user connected when users implemented
+        /*Test of log activity
+         * await ActivityService.LogActivity(new Activity
+        {
+            type="test",
+            action = "test",
+            date = DateTime.Now,
+            additionalInfo = "test of add activity",
+            username = "abc"
+            
+        }, "abc");*/
+    }
+
+
+}
