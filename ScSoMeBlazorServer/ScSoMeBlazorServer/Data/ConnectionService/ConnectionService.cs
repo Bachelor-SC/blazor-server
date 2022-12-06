@@ -1,16 +1,21 @@
-﻿using ScSoMeBlazorServer.Models;
+﻿using ScSoMeBlazorServer.Data;
+using ScSoMeBlazorServer.Data.LogActivityService;
+using ScSoMeBlazorServer.Models;
 using ScSoMeBlazorServer.Network;
 using System.Diagnostics;
 using System.Text.Json;
+using Activity = ScSoMeBlazorServer.Models.Activity;
 
 namespace ScSoMeBlazorServer.Data.ConnectionService
 {
     public class ConnectionService : IConnectionService
     {
         private readonly IAPIClient client;
+        private ILogActivityService activityService;
 
-        public ConnectionService(IAPIClient client)
+        public ConnectionService(IAPIClient client, ILogActivityService logActivity)
         {
+            activityService = logActivity;
             this.client = client;
         }
         public async Task AddConnection(string username,string connectionUsername)
@@ -23,7 +28,22 @@ namespace ScSoMeBlazorServer.Data.ConnectionService
             };
 
             await client.postToAPI($"Connections/AddConnection", con);
+            await logActivity(username, connectionUsername);
+            await logActivity(connectionUsername, username);
 
+        }
+
+        private async Task logActivity(string activityTargetusername, string connectionUsername)
+        {
+            await activityService.LogActivity(new Activity
+            {
+                type = "Connection",
+                action = "add",
+                date = DateTime.Now,
+                additionalInfo = $"The user {activityTargetusername} added {connectionUsername} as a connection",
+                username = activityTargetusername
+
+            }, activityTargetusername);
         }
 
         public async Task<List<Connection>> GetAllConnections(string username)
