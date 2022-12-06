@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace ScSoMeBlazorServer.Network
@@ -23,7 +24,7 @@ namespace ScSoMeBlazorServer.Network
         public async Task<string> postToAPI(string path,Object PostObject)
         {
             string jsonObject = JsonSerializer.Serialize(PostObject);
-            HttpContent content = new StringContent(jsonObject);
+            HttpContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await client.PostAsync(client.BaseAddress + path,content);
 
             return await response.Content.ReadAsStringAsync();

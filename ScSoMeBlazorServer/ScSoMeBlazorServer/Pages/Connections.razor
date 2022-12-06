@@ -1,0 +1,55 @@
+﻿@page "/connections"
+@using ScSoMeBlazorServer.Data.ConnectionService;
+@using ScSoMeBlazorServer.Models;
+@inject HttpClient client;
+@inject IConnectionService ConnectionService
+
+<PageTitle>Connections</PageTitle>
+
+<h1>Activities</h1>
+@if (connections == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="container paddingRemove">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>My Activities</h3>
+            </div>
+        </div>
+        <div class="row border-bottom border-dark rowStyle">
+            <div class="col-md-2 font-weight-bold">Connection name</div>
+            <div class="col-md-2 font-weight-bold">Connected since</div>
+        </div>
+        @foreach (Connection con in connections)
+        {
+            <div class="row border-bottom border-dark">
+                <div class="col-md-2">
+                    <div>@con.usernameCon2</div>
+                </div>
+                <div class="col-md-2">
+                    <div>@con.createdDate</div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@code {
+    List<Connection> connections;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        connections = await ConnectionService.GetAllConnections("abc");//TODO: Add user connected when users implemented
+        //add connection test
+        // await ConnectionService.AddConnection("abc","connectionTest");
+    }
+
+
+}

@@ -4,7 +4,7 @@
 @inject HttpClient client;
 @inject ILogActivityService ActivityService
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Activities</PageTitle>
 
 <h1>Activities</h1>
 @if (activities == null)
@@ -55,8 +55,18 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         activities = await ActivityService.GetActivities("abc");//TODO: Add user connected when users implemented
+        /*Test of log activity
+         * await ActivityService.LogActivity(new Activity
+        {
+            type="test",
+            action = "test",
+            date = DateTime.Now,
+            additionalInfo = "test of add activity",
+            username = "abc"
+            
+        }, "abc");*/
     }
 
 
