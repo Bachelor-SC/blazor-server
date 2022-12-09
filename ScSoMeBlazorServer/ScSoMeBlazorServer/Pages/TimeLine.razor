@@ -1,32 +1,240 @@
 ﻿@page "/"
+@using ScSoMeBlazorServer.Data.ConnectionService
+@using ScSoMeBlazorServer.Data.TimelineService
+@using ScSoMeBlazorServer.Models
+@using ScSoMeBlazorServer.Network
+
+@inject ITimelineService TimelineService;
+@inject IConnectionService ConnectionService;
+@inject IAPIClient client;
+
+<style>
+    .timelineItem{
+        border-color: gray;
+        border-radius: 10px;
+        box-shadow: 2px 2px 2px 2px #d3d3d3;
+        height: fit-content;
+        padding: 20px;
+        background-color: #00d2ff;
+        margin-bottom: 30px;
+    }
+
+    .inputTextTimeline{
+        border:0;
+        padding: 5px;
+        border-radius: 5px;
+        width: 90%;
+    }
+
+    .inputTextTimeline:focus{
+        outline:none;
+    }
+
+    .grid{
+        padding: 20px;
+    }
 
 
-<h1>TimeLine</h1>
-@*@if (Timeline == null)
+    .submitPost{
+        height: 35px;
+        border-radius: 10px;
+        background-color: #00b0ff;
+        border-color: #00b0ff;
+        color: black;
+        font-weight: bold;
+    }
+
+    .postLabel{
+        font-weight:600;
+    }
+
+    .profileImg{
+        border-radius:50%;
+        width: 30px;
+        margin-right: 10px;
+    }
+    .personName{
+        margin: 0;
+    }
+
+    .connectionsItem{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .likeAndComment{
+        display: flex;
+        margin-top: 0.5rem;
+    }
+
+    .likeButton{
+        width: 30px;
+        height: 30px;
+        
+    }
+    .inputComment{
+        border:0;
+        padding: 5px;
+        height:30px;
+        border-radius: 5px;
+        width: 300px;
+    }
+
+    .submitComment{
+        border-radius: 10px;
+        padding-top: 3px;
+        margin-right: 4px;
+        background-color: #00b0ff;
+        border-color: #00b0ff;
+        color: black;
+        font-weight: bold;
+    }
+
+    .commentItem{
+        border-radius: 10px;
+        margin-top:10px;
+        margin-bottom:10px;
+    }
+
+    .time{
+        font-size: 12px;
+        font-style: italic;
+        margin-left: 0.5rem;
+    }
+
+    .numberOfLikes{
+        font-size: 12px;
+        font-style: bold;
+        margin-right: 20px;
+    }
+
+    .postContent{
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+
+
+</style>
+
+@if (listOfPosts == null)
 {
     <p>
-        <em>Loading...</em>
+        <em>loading...</em>
     </p>
 }
 else
-{}*@
-
-<div class="container">
+{
+    <div class="container">
     <div class="row">
-        <div class="col-md-2">
-            @*SideMenuStuff*@
-            <p>sidemenustuff</p>
-        </div>
-        <div class="col-md-8">
-            @*TimeLine*@
-            <p>TimeLine</p>
-        </div>
-        <div class="col-md-2">
-            @*Connections*@
-            <p>connections</p>
+        <div class="col-md-9 grid">
+            <div class="timelineItem">
+                <form>
+                    <label for="inputTextTimeline" class="postLabel">Create a new post</label>
+                    <input @bind="content" class="inputTextTimeline" placeholder="Create a new post..."/>
+                    <button class="btn btn-secondary submitPost" @onclick="@(() => CreatePost("abc", content))">Post</button>
+                </form>
+            </div>
+            @foreach (var post in listOfPosts)
+            {
+                <div class="timelineItem">
+                    <img class="profileImg" src="Icons/HumanIcon.png" alt="Image">
+                    <label for="inputTextTimeline" class="postLabel">@post.username</label>
+                    <span class="time">posted @post.createdDate</span>
+                    <p class="postContent">@post.content</p>
+                    <div class="likeAndComment">
+                        <img src="/Icons/icons8-facebook-like-64.png" class="likeButton" @onclick="@(() => { post.isLiked = !post.isLiked; LikePost("abc", post.isLiked, post.postID);})"/>
+                        <span id="postLikes" class="numberOfLikes">@post.likes</span>
+                        <form>
+                            <input @bind="comment" class="inputComment" placeholder="Comment..."/>
+                            <button class="btn btn-secondary submitComment" @onclick="@(() => SendComment(post.username, comment, post.postID))">Send comment</button>
+                        </form>
+                        <button class="btn btn-secondary submitComment" type="button" data-toggle="collapse" href="#collapseExample" @onclick="@(() => { post.commentsVisible = !post.commentsVisible; })">
+                        Show comments ▼
+                      </button>
+                    </div>
+                    <div class="collapse @(post.commentsVisible ? "show" : "")">
+                        @foreach (var comment in listOfComments)
+                            {
+                                if(comment.postID == post.postID)
+                                {
+                                         <div class="card card-body commentItem">
+                                             <div class="connectionsItem">
+                                             <img class="profileImg" src="Icons/HumanIcon.png" alt="Image">
+                                             <p class="personName">@comment.username</p>
+                                             <span class="time">commented @comment.createdDate</span>
+                                         </div>
+                                         <span>@comment.comment</span>  
+                                          <div class="likeAndComment">
+                                             <img src="/Icons/icons8-facebook-like-64.png" class="likeButton" @onclick="@(() => {comment.isLiked = !comment.isLiked; LikeComment("abc", comment.isLiked, comment.commentID);})"/>
+                                             <span class="numberOfLikes">@comment.likes</span>
+                                         </div>
+                                         </div>
+                                }
+                            }
+                            
+                    </div>
+                    
+            </div>
+            }
+            
+           
+        </div> 
+        <div class="col-md-3 grid" >
+            <h5>Your Connections</h5>
+            @foreach (var connection in listOfConnections)
+                {
+                <div class="connectionsItem timelineItem">
+                <img class="profileImg" src="Icons/HumanIcon.png" alt="Image">
+                <p class="personName">@connection.usernameCon2</p> 
+                </div>
+                }
         </div>
     </div>
 </div>
+}
+
+
 @code {
+
+    private string comment { get; set; }
+    private string content { get; set; }
+
+
+    
+    List<Post> listOfPosts;
+    List<Connection> listOfConnections;
+    List<Comment> listOfComments;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listOfPosts = await TimelineService.GetAllPosts();
+        listOfConnections = await ConnectionService.GetAllConnections("abc");
+        listOfComments = await TimelineService.GetAllComments();
+    }
+
+    //Husk at ændre username her til at være usernamet af brugeren der er logget ind, når christopher har pushet
+    private void SendComment(string username,string comment ,int postID)
+    {
+        TimelineService.AddComment(username, comment, postID);
+    }
+
+    private void CreatePost(string username, string content)
+    {
+        TimelineService.AddPost(username, content);
+    }
+
+    private void LikePost(string username, bool isLiked, int postID)
+    {
+        TimelineService.LikePost(username, isLiked, postID);
+        
+    }
+
+    private void LikeComment(string username, bool isLiked, int commentID)
+    {
+        TimelineService.LikeComment(username, isLiked, commentID);
+    }
 
 }

@@ -16,6 +16,20 @@ namespace ScSoMeBlazorServer.Data.TimelineService
             this.client = client;
         }
 
+        public async Task LikePost(string username, bool isLiked, int postID)
+        {
+            string isLikedAndPostID = "" + isLiked +", " + postID;
+            await client.postToAPI($"Timeline/LikePost", isLikedAndPostID);
+            await logLikeActivity(username);
+        }
+
+        public async Task LikeComment(string username, bool isLiked, int commentID)
+        {
+            string isLikedAndCommentID = "" + isLiked + ", " + commentID;
+            await client.postToAPI($"Timeline/LikeComment", isLikedAndCommentID);
+            await logLikeActivity(username);
+        }
+
         public async Task AddComment(string username, string comment, int postID)
         {
             Comment commentToAdd = new Comment
@@ -24,17 +38,18 @@ namespace ScSoMeBlazorServer.Data.TimelineService
                 comment = comment,
                 likes = 0,
                 postID = postID,
+                createdDate = DateTime.Now,
             };
             await client.postToAPI($"Timeline/AddComment", commentToAdd);
-            await logActivity(username);
+            await logCommentActivity(username);
         }
 
-        public async Task<List<Comment>> GetAllCommentsForAPost(int postID)
+        public async Task<List<Comment>> GetAllComments()
         {
-            string json = await client.getFromAPI($"Timeline/CommentsForAPost?postID={postID}");
-            return createCommentsList(json, postID);
+            string json = await client.getFromAPI($"Timeline/GetAllComments");
+            return createCommentsList(json);
 
-            static List<Comment> createCommentsList(string json, int postID)
+            static List<Comment> createCommentsList(string json)
             {
                 try
                 {
@@ -43,7 +58,8 @@ namespace ScSoMeBlazorServer.Data.TimelineService
                     username = "Empty",
                     comment = "List returned empty",
                     likes = 0,
-                    postID = postID,
+                    postID = 0,
+                    createdDate = DateTime.Now,
                 }
                 };
                 }
@@ -55,7 +71,8 @@ namespace ScSoMeBlazorServer.Data.TimelineService
                     username = "ERROR",
                     comment = ex.Message,
                     likes = 0,
-                    postID = postID,
+                    postID = 0,
+                    createdDate= DateTime.Now,
 
                     });
                     return list;
@@ -71,9 +88,10 @@ namespace ScSoMeBlazorServer.Data.TimelineService
                 username = username,
                 content = content,
                 likes = 0,
+                createdDate = DateTime.Now,
             };
             await client.postToAPI($"Timeline/AddPost", post);
-            await logActivity(username);
+            await logPostActivity(username);
         }
 
         public async Task<List<Post>> GetAllPosts()
@@ -90,6 +108,7 @@ namespace ScSoMeBlazorServer.Data.TimelineService
                     username = "Empty",
                     content = "List returned empty",
                     likes = 0,
+                    createdDate = DateTime.Now,
                 }
                 };
                 }
@@ -101,13 +120,14 @@ namespace ScSoMeBlazorServer.Data.TimelineService
                         username = "ERROR",
                         content = ex.Message,
                         likes = 0,
+                        createdDate = DateTime.Now,
                     });
                     return list;
                 }
             }
         }
 
-        private async Task logActivity(string activityTargetusername)
+        private async Task logCommentActivity(string activityTargetusername)
         {
             await activityService.LogActivity(new Activity
             {
@@ -115,6 +135,32 @@ namespace ScSoMeBlazorServer.Data.TimelineService
                 action = "add",
                 date = DateTime.Now,
                 additionalInfo = $"The user {activityTargetusername} added a comment",
+                username = activityTargetusername
+
+            }, activityTargetusername);
+        }
+
+        private async Task logPostActivity(string activityTargetusername)
+        {
+            await activityService.LogActivity(new Activity
+            {
+                type = "Post",
+                action = "add",
+                date = DateTime.Now,
+                additionalInfo = $"The user {activityTargetusername} posted something",
+                username = activityTargetusername
+
+            }, activityTargetusername);
+        }
+
+        private async Task logLikeActivity(string activityTargetusername)
+        {
+            await activityService.LogActivity(new Activity
+            {
+                type = "Like",
+                action = "update",
+                date = DateTime.Now,
+                additionalInfo = $"The user {activityTargetusername} liked something",
                 username = activityTargetusername
 
             }, activityTargetusername);

@@ -8,49 +8,21 @@
             <img class="logoIcon" src="Icons/Rocket.png">
         </a>
         <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"><img class="profileIcon menuIcon" alt="user" src="Icons/MenuIcon.png"></span>
         </button>
         <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
             <ul class="navbar-nav searchBar">
 
-                @*<AuthorizeView Policy="LoggedInUser">
-                    <Authorized>*@
-                        <div class="dropdown">
-                            <div class="btn profileButton" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="profileIcon" alt="user" src="Icons/HumanIcon.png">
+                            <div class="menu">
+                                <a class="menuItem" href="">My Profile</a>
+                                <a class="menuItem" href="">My Connections</a>
+                                <a class="menuItem" href="">My Coaches</a>
                             </div>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="">My Profile</a>
-                                @*<a class="dropdown-item" @onclick="ChangePageToFavourite">My Favorites</a>*@
-                                @*<a class="dropdown-item" @onclick="PerformLogout">LogOut</a>*@
-                            </div>
-                        </div>
-                    @*</Authorized>*@
-@*                    <NotAuthorized>
-                        <a href="Login">Log in</a>
-                        <p> or </p>
-                        <a href="SignUp">Sign Up</a>
-
-
-                    </NotAuthorized>
-                </AuthorizeView>*@
-
             </ul>
             <ul class="navbar-nav flex-grow-1 searchBar">
 
-                <div class="dropdown">
-                    <div class="btn profileButton WhiteText" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Menu<img class="profileIcon menuIcon" alt="user" src="Icons/MenuIcon.png">
-                    </div>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="">Main Page</a>
-                        <a class="dropdown-item" href="Top200Movies">Top 20 Movies</a>
-                        <a class="dropdown-item" href="Top200Actors">Top 20 Actors</a>
-                        <a class="dropdown-item" href="Top200Directors">Top 20 Directors</a>
-                        <a class="dropdown-item" href="MovieDecadesRating">Movie ratings per decade</a>
-                        @*<div class="dropdown-divider"></div>*@
-                        @*<a class="dropdown-item" @onclick="ChangePageToSurprise">Surprise Me</a>*@
-                    </div>
+                <div class="menu">
+                    <a class="menuItem" href="">Coaches</a>
                 </div>
                 <li class="nav-item navSearchItem">
                     <form id="form" @onsubmit="OnChange">
@@ -70,22 +42,6 @@
 
 
 @code {
-    //[CascadingParameter]
-    //private Task<AuthenticationState> authenticationStateTask { get; set; }
-
-    //string _username;
-    Random random = new Random();
-    //Movie _movie;
-
-    //private async Task ChangePageToFavourite()
-    //{
-    //    var authState = await authenticationStateTask;
-    //    _username= authState.User.Identity.Name; 
-    //    NavigationManager.NavigateTo($"/FavoriteMovies/{_username}");
-
-    //}
-
-    
     bool collapseNavMenu = true;
 
     string searchField = "";
