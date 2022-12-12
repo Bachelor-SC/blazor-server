@@ -81,5 +81,14 @@ namespace ScSoMeBlazorServer.Data.ConnectionService
                 }
             }
         }
+
+        public async Task<bool> CheckIfAlreadyConnected(string username, string connectionUsername)
+        {
+            string json = await client.getFromAPI($"Connections/CheckIfAlreadyConnected?user={username}&connectionUsername={connectionUsername}");
+            return JsonSerializer.Deserialize<bool>(json);
+
+        }
+
+
     }
 }

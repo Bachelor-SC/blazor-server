@@ -4,7 +4,7 @@ namespace ScSoMeBlazorServer.Data.TimelineService
 {
     public interface ITimelineService
     {
-        public Task<List<Post>> GetAllPosts();
+        public Task<List<Post>> GetAllPosts(string username);
         public Task AddPost(string username, string content);
 
         public Task<List<Comment>> GetAllComments();

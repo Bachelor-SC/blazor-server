@@ -94,9 +94,9 @@ namespace ScSoMeBlazorServer.Data.TimelineService
             await logPostActivity(username);
         }
 
-        public async Task<List<Post>> GetAllPosts()
+        public async Task<List<Post>> GetAllPosts(string username)
         {
-            string json = await client.getFromAPI($"Timeline/GetAllPosts");
+            string json = await client.getFromAPI($"Timeline/GetAllPosts?username={username}");
             return createPostsList(json);
 
             static List<Post> createPostsList(string json)

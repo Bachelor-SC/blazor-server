@@ -10,6 +10,7 @@
 @inject IConnectionService ConnectionService;
 @inject IAPIClient client;
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
 <style>
     .timelineItem{
@@ -148,7 +149,7 @@ else
                     <span class="time">posted @post.createdDate</span>
                     <p class="postContent">@post.content</p>
                     <div class="likeAndComment">
-                        <img src="/Icons/icons8-facebook-like-64.png" class="likeButton" @onclick="@(() => { post.isLiked = !post.isLiked; LikePost("abc", post.isLiked, post.postID);})"/>
+                        <img src="/Icons/icons8-facebook-like-64.png" class="likeButton" @onclick="@(() => { post.isLiked = !post.isLiked; LikePost(usernameCached, post.isLiked, post.postID);})"/>
                         <span id="postLikes" class="numberOfLikes">@post.likes</span>
                         <form>
                             <input @bind="comment" class="inputComment" placeholder="Comment..."/>
@@ -171,7 +172,7 @@ else
                                          </div>
                                          <span>@comment.comment</span>  
                                           <div class="likeAndComment">
-                                             <img src="/Icons/icons8-facebook-like-64.png" class="likeButton" @onclick="@(() => {comment.isLiked = !comment.isLiked; LikeComment("abc", comment.isLiked, comment.commentID);})"/>
+                                             <img src="/Icons/icons8-facebook-like-64.png" class="likeButton" @onclick="@(() => {comment.isLiked = !comment.isLiked; LikeComment(usernameCached, comment.isLiked, comment.commentID);})"/>
                                              <span class="numberOfLikes">@comment.likes</span>
                                          </div>
                                          </div>
@@ -189,7 +190,7 @@ else
             <h5>Your Connections</h5>
             @foreach (var connection in listOfConnections)
                 {
-                <div class="connectionsItem timelineItem">
+                <div class="connectionsItem timelineItem" @onclick="@(() => ConnectionClicked(connection.usernameCon2))">
                 <img class="profileImg" src="Icons/HumanIcon.png" alt="Image">
                 <p class="personName">@connection.usernameCon2</p> 
                 </div>
@@ -214,12 +215,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        listOfPosts = await TimelineService.GetAllPosts();
+        listOfPosts = await TimelineService.GetAllPosts(usernameCached);
         listOfConnections = await ConnectionService.GetAllConnections(usernameCached);
         listOfComments = await TimelineService.GetAllComments();
     }
 
-    //Husk at ændre username her til at være usernamet af brugeren der er logget ind, når christopher har pushet
     private void SendComment(string username,string comment ,int postID)
     {
         TimelineService.AddComment(username, comment, postID);
@@ -233,12 +233,17 @@ else
     private void LikePost(string username, bool isLiked, int postID)
     {
         TimelineService.LikePost(username, isLiked, postID);
-        
+
     }
 
     private void LikeComment(string username, bool isLiked, int commentID)
     {
         TimelineService.LikeComment(username, isLiked, commentID);
+    }
+
+    private void ConnectionClicked(string username)
+    {
+        NavigationManager.NavigateTo($"/profilePage/{username}");
     }
 
 }

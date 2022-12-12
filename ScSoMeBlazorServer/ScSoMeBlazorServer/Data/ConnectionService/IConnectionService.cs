@@ -7,5 +7,7 @@ namespace ScSoMeBlazorServer.Data.ConnectionService
         public Task<List<Connection>> GetAllConnections(string username);
 
         public Task AddConnection(string username,string connectionUsername);
+
+        public Task<bool> CheckIfAlreadyConnected(string username, string connectionUsername);
     }
 }
