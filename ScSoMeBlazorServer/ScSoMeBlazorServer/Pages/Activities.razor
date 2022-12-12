@@ -1,4 +1,5 @@
 ﻿@page "/activities"
+@using ScSoMeBlazorServer.Authentication
 @using ScSoMeBlazorServer.Data.LogActivityService;
 @using ScSoMeBlazorServer.Models;
 @inject HttpClient client;
@@ -54,10 +55,13 @@ else
 @code {
     List<Activity> activities;
 
+    private string usernameCached = CustomAuthentication.cachedUser.Username;
+
+
     protected override async Task OnInitializedAsync()
     {
 
-        activities = await ActivityService.GetActivities("abc");//TODO: Add user connected when users implemented
+        activities = await ActivityService.GetActivities(usernameCached);//TODO: Add user connected when users implemented
         /*Test of log activity
          * await ActivityService.LogActivity(new Activity
         {

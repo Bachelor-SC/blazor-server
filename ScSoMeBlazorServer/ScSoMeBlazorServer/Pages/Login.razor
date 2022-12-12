@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/"
 @namespace LoginComponent
 @using ScSoMeBlazorServer.Authentication;
 @using ScSoMeBlazorServer.Hasher;
@@ -25,7 +25,7 @@
 
             <a href="" @onclick="PerformLogin">
                 Login
-            </a>
+             </a>
 
             <a href="" @onclick="ToSignUp">
                 Sign up
@@ -49,9 +49,17 @@
 
 
     private void ToSignUp(){
-        NavigationManager.NavigateTo("/signUp");
-    }
+        try
+        {
+            NavigationManager.NavigateTo("/signUp");
 
+        }
+        catch (Exception e ){
+        
+            Console.WriteLine(e);
+        }
+    }
+    
     private async Task PerformLogin()
     {
         PasswordHasher hasher = new PasswordHasher();

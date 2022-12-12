@@ -1,12 +1,15 @@
-﻿@page "/"
+﻿@page "/timeline"
+@using ScSoMeBlazorServer.Authentication
 @using ScSoMeBlazorServer.Data.ConnectionService
 @using ScSoMeBlazorServer.Data.TimelineService
 @using ScSoMeBlazorServer.Models
 @using ScSoMeBlazorServer.Network
+@attribute [Authorize]
 
 @inject ITimelineService TimelineService;
 @inject IConnectionService ConnectionService;
 @inject IAPIClient client;
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <style>
     .timelineItem{
@@ -134,7 +137,7 @@ else
                 <form>
                     <label for="inputTextTimeline" class="postLabel">Create a new post</label>
                     <input @bind="content" class="inputTextTimeline" placeholder="Create a new post..."/>
-                    <button class="btn btn-secondary submitPost" @onclick="@(() => CreatePost("abc", content))">Post</button>
+                        <button class="btn btn-secondary submitPost" @onclick="@(() => CreatePost(usernameCached, content))">Post</button>
                 </form>
             </div>
             @foreach (var post in listOfPosts)
@@ -202,6 +205,7 @@ else
     private string comment { get; set; }
     private string content { get; set; }
 
+    private string usernameCached = CustomAuthentication.cachedUser.Username;
 
     
     List<Post> listOfPosts;
@@ -211,7 +215,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         listOfPosts = await TimelineService.GetAllPosts();
-        listOfConnections = await ConnectionService.GetAllConnections("abc");
+        listOfConnections = await ConnectionService.GetAllConnections(usernameCached);
         listOfComments = await TimelineService.GetAllComments();
     }
 

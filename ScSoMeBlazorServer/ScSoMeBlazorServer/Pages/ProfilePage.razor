@@ -221,6 +221,7 @@
     private UserInfo user;
     private string message;
     private int count;
+    private string passCache = CustomAuthentication.cachedUser.HashedPassword;
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -250,9 +251,21 @@
 
     private async void SubmitChanges()
     {
-        PasswordHasher hasher = new PasswordHasher();
-        user.HashedPassword = hasher.GetHashPasswords(user.HashedPassword);
-        await UserService.PatchUserInfo(user);
+        if (user.HashedPassword.Equals(passCache))
+        {
+            await UserService.PatchUserInfo(user);
+        }
+        else
+        {
+            PasswordHasher hasher = new PasswordHasher();
+            user.HashedPassword = hasher.GetHashPasswords(user.HashedPassword);
+            await UserService.PatchUserInfo(user);
+
+        }
+
+
+
+
 
     }
 

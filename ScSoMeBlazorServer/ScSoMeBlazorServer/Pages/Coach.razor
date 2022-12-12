@@ -1,5 +1,6 @@
 ﻿@page "/CoachPage/{username}"
 @using ScSoMeBlazorServer.Data.CoachService;
+@attribute [Authorize]
 
 @inject ICoachService coachService;
 

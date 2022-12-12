@@ -1,4 +1,5 @@
 ﻿@page "/connections"
+@using ScSoMeBlazorServer.Authentication
 @using ScSoMeBlazorServer.Data.ConnectionService;
 @using ScSoMeBlazorServer.Models;
 @inject HttpClient client;
@@ -43,13 +44,14 @@ else
 
 @code {
     List<Connection> connections;
+    private string usernameCached = CustomAuthentication.cachedUser.Username;
 
     protected override async Task OnInitializedAsync()
     {
 
-        connections = await ConnectionService.GetAllConnections("abc");//TODO: Add user connected when users implemented
+        connections = await ConnectionService.GetAllConnections(usernameCached);//TODO: Add user connected when users implemented
         //add connection test
-         await ConnectionService.AddConnection("abc","connectionTest2");
+        await ConnectionService.AddConnection(usernameCached, "connectionTest2");
     }
 
 

@@ -4,71 +4,73 @@
 
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm backGroundColorNavBar border-bottom box-shadow mb-3">
     <div class="container">
-        
-                <a class="navbar-brand" href="">
+
+        <a class="navbar-brand" href="">
             <img class="logoIcon" src="Icons/Rocket.png">
         </a>
-                                    <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
-                                <span class="navbar-toggler-icon"><img class="profileIcon menuIcon" alt="user" src="Icons/MenuIcon.png"></span>
-                            </button>
+        <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"><img class="profileIcon menuIcon" alt="user" src="Icons/MenuIcon.png"></span>
+        </button>
 
         <CascadingAuthenticationState>
-        <AuthorizeView>
+            <AuthorizeView>
 
                 <NotAuthorized>
-                    
+
                     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-                    <ul class="navbar-nav searchBar">
+                        <ul class="navbar-nav searchBar">
 
-                    <div class="menu">
+                            <div class="menu">
 
-                     <a class="menuItem" href="">login</a>
-                     <a class="menuItem" href="">signUp</a>
+                                <a class="menuItem" href="">login</a>
+                                <a class="menuItem" href="">signUp</a>
+                            </div>
+
+                        </ul>
+
+
+
                     </div>
 
-                    </ul>
+                </NotAuthorized>
+
+                <Authorized>
 
 
 
-        </div>
-
-                </NotAuthorized> 
-            
-        <Authorized>
-            
-
-
-        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-            <ul class="navbar-nav searchBar">
+                    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+                        <ul class="navbar-nav searchBar">
 
                             <div class="menu">
                                 <a class="menuItem" href="profilePage">My Profile</a>
+                                <a class="menuItem" href="timeline">Timeline</a>
+
                                 <a class="menuItem" href="Connections">My Connections</a>
                                 <a class="menuItem" href="Activities">My Activities</a>
 
                             </div>
-            </ul>
-            <ul class="navbar-nav flex-grow-1 searchBar">
+                        </ul>
+                        <ul class="navbar-nav flex-grow-1 searchBar">
 
-                <div class="menu">
-                    <a class="menuItem" href="AllCoaches">Coaches</a>
-                </div>
-                <li class="nav-item navSearchItem">
-                    <form id="form" @onsubmit="OnChange">
-                        <input type="search" id="query" name="q" placeholder="Search..." @oninput="@((arg) => ExecuteFilter(arg))">
-                        <button class="Button2" type="submit">Search</button>
-                    </form>
-                </li>
-
-
-            </ul>
+                            <div class="menu">
+                                <a class="menuItem" href="AllCoaches">Coaches</a>
+                            </div>
+                            <li class="nav-item navSearchItem">
+                                <form id="form" @onsubmit="OnChange">
+                                    <input type="search" id="query" name="q" placeholder="Search..." @oninput="@((arg) => ExecuteFilter(arg))">
+                                    <button class="Button2" type="submit">Search</button>
+                                </form>
+                            </li>
 
 
+                        </ul>
 
-           </div>
-            </Authorized>
-        </AuthorizeView>
-        
+
+
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+
         </CascadingAuthenticationState>
 
     </div>
@@ -80,7 +82,7 @@
     bool collapseNavMenu = true;
 
     string searchField = "";
-    
+
     string baseMenuClass = "navbar-collapse d-sm-inline-flex flex-sm-row-reverse";
 
     string NavMenuCssClass => baseMenuClass + (collapseNavMenu ? " collapse" : "");
@@ -89,14 +91,14 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
-    
+
     private void OnChange()
     {
         NavigationManager.NavigateTo($"/SearchPage/{searchField}");
     }
-    
-    
-    
+
+
+
     private void ExecuteFilter(ChangeEventArgs changeEventArgs)
     {
         if (changeEventArgs.Value != null)
