@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using ScSoMeBlazorServer.Data;
+using ScSoMeBlazorServer.Data.CoachService;
 using ScSoMeBlazorServer.Data.ConnectionService;
 using ScSoMeBlazorServer.Data.LogActivityService;
 using ScSoMeBlazorServer.Data.TimelineService;
@@ -15,6 +16,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<ILogActivityService, LogActivityService>();
 builder.Services.AddSingleton<IConnectionService,ConnectionService>();
 builder.Services.AddSingleton<ITimelineService, TimelineService>();
+builder.Services.AddSingleton<ICoachService, CoachService>();
 builder.Services.AddHttpClient<IAPIClient, APIClient>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:5003");
