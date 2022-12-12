@@ -251,16 +251,18 @@
 
     private async void SubmitChanges()
     {
+        PasswordHasher hasher = new PasswordHasher();
+
         if (user.HashedPassword.Equals(passCache))
         {
             await UserService.PatchUserInfo(user);
         }
         else
         {
-            PasswordHasher hasher = new PasswordHasher();
+            passCache = user.HashedPassword;
+            passCache = hasher.GetHashPasswords(passCache);
             user.HashedPassword = hasher.GetHashPasswords(user.HashedPassword);
             await UserService.PatchUserInfo(user);
-
         }
 
 
@@ -274,17 +276,13 @@
         count++;
         if (count == 1)
         {
-            message = "This will delete you profile";
+            message = "Are you sure?";
         }
         if (count == 2)
         {
-            message = "Are you sure?";
-        }
-        if (count == 3)
-        {
             message = "Last chance.";
         }
-        if (count == 4)
+        if (count == 3)
         {
             count = 0;
             message = "Deleted";
