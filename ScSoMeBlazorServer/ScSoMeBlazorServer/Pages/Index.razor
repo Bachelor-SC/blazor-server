@@ -1,4 +1,5 @@
 ﻿@page "/"
+@attribute [Authorize]
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +8,25 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?"/>
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+
+        <NotAuthorized>
+            <h1>Not Authorized!</h1>
+
+        </NotAuthorized>
+
+        <Authorized>
+            <h1>Hello @context.User.Identity.Name</h1>
+        </Authorized>
+    </AuthorizeView>
+
+    <AuthorizeView Policy="FreeUser">
+        Your security level is @context.User.FindFirst(claim => claim.Type.Equals("SubscriptionLevel")).Value
+    </AuthorizeView>
+
+    <AuthorizeView Policy="PaidUser">
+        Your security level is @context.User.FindFirst(claim => claim.Type.Equals("SubscriptionLevel")).Value
+    </AuthorizeView>
+</CascadingAuthenticationState>
