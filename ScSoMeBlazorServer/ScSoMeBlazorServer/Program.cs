@@ -4,6 +4,7 @@ using ScSoMeBlazorServer.Data;
 using ScSoMeBlazorServer.Data.CoachService;
 using ScSoMeBlazorServer.Data.ConnectionService;
 using ScSoMeBlazorServer.Data.LogActivityService;
+using ScSoMeBlazorServer.Data.TimelineService;
 using ScSoMeBlazorServer.Network;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<ILogActivityService, LogActivityService>();
 builder.Services.AddSingleton<IConnectionService,ConnectionService>();
+builder.Services.AddSingleton<ITimelineService, TimelineService>();
 builder.Services.AddSingleton<ICoachService, CoachService>();
 builder.Services.AddHttpClient<IAPIClient, APIClient>(client =>
 {
