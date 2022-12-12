@@ -3,6 +3,7 @@
 @using ScSoMeBlazorServer.Models;
 @inject HttpClient client;
 @inject IConnectionService ConnectionService
+@attribute [Authorize]
 
 <PageTitle>Connections</PageTitle>
 

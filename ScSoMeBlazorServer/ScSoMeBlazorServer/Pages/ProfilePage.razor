@@ -1,0 +1,299 @@
+﻿@page "/profilePage"
+@using ScSoMeBlazorServer.Models.UserData
+@using ScSoMeBlazorServer.Data.UserService;
+@using ScSoMeBlazorServer.Authentication;
+@using ScSoMeBlazorServer.Hasher;
+
+@attribute [Authorize]
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<CascadingAuthenticationState>
+
+    <AuthorizeView>
+        <h3>Hello @context.User.Identity.Name</h3>
+
+        @if (user == null)
+        {
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+
+        else
+        {
+            if (user.isEditing)
+            {
+                <div class="container" style="margin-left:0">
+                    <div class="row">
+
+                        <div class="col-6">
+
+                            <img height="300" width="300" src="@user.ProfilePicture" class="col-auto rounded-circle" alt="profile picture">
+
+
+
+                        </div>
+                    </div>
+                    <img height="300" width="300" src="@user.CoverPicture" class="col-auto rounded-circle" alt="profile picture">
+
+
+                    <div class="form-group">
+                       <!-- <input type="text" placeholder="Username" @bind-value="user.Username">-->
+                        <p> @user.Username"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" placeholder="Password" @bind-value="user.HashedPassword">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" placeholder="Address" @bind-value="user.Location.Address">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="number" placeholder="Postal code" @bind-value="user.Location.PostalCode">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" placeholder="City" @bind-value="user.Location.City">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="number" placeholder="Phone number" @bind-value="user.Phonenumber">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" placeholder="Email" @bind-value="user.Email">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" placeholder="@user.ExternalLinks.Link" @bind-value="user.ExternalLinks.Link">
+                    </div>
+
+
+                    <table>
+                        <tr>
+                            <th>SocialMedias</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" placeholder="@user.SocialMedia.Instagram" @bind-value="user.SocialMedia.Instagram" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" placeholder="@user.SocialMedia.Facebook" @bind-value="user.SocialMedia.Facebook" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" placeholder="@user.SocialMedia.LinkedIn" @bind-value="user.SocialMedia.LinkedIn" />
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <th>ExternalLink</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" placeholder="@user.ExternalLinks.Link" @bind-value="user.ExternalLinks.Link" />
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+
+                <button @onclick="() => SwitchEditMode()">Enable/ Disable editing</button>
+
+
+            }
+            else
+            {
+                <div class="container" style="margin-left:0">
+                    <div class="row">
+
+                        <div class="col-6">
+
+                            <img height="300" width="300" src="@user.ProfilePicture" class="col-auto rounded-circle" alt="profile picture">
+
+
+                        </div>
+                    </div>
+                    <img height="300" width="300" src="@user.CoverPicture" class="col-auto rounded-circle" alt="profile picture">
+
+                    <div class="form-group">
+                        <p> @user.Username"</p>
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.HashedPassword"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.Location.Address"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.Location.PostalCode"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.Location.City"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.Phonenumber"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.Email"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.ExternalLinks.Link"</p>
+
+                    </div>
+
+
+                    <table>
+                        <tr>
+                            <th>SocialMedias</th>
+                        </tr>
+                        <tr>
+                            <td>@user.SocialMedia.Instagram</td>
+                        </tr>
+                        <tr>
+                            <td>@user.SocialMedia.Facebook</td>
+                        </tr>
+                        <tr>
+                            <td>@user.SocialMedia.LinkedIn</td>
+                        </tr>
+                    </table>
+
+                    <table>
+                        <tr>
+                            <th>ExternalLink</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                @user.ExternalLinks.Link"
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <button @onclick="() => SwitchEditMode()">Enable/ Disable editing</button>
+                <button @onclick="() => PerformLogout()">Logout</button>
+
+                <button style="color:green" @onclick="() => SubmitChanges()">Submit changes</button>
+
+                <div style="color:red">@message</div>
+                <button style="color:red" @onclick="() => DeleteProfile()">Delete profile</button>
+
+
+            }
+
+            
+        }
+
+
+
+
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+
+@code {
+    private UserInfo user;
+    private string message;
+    private int count;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+
+        user = await UserService.GetUserInfo(authState.User.Identity.Name);
+
+        user.isEditing = false;
+
+        count = 0;
+    }
+
+    private void SwitchEditMode()
+    {
+        if (user.isEditing)
+        {
+            user.isEditing = false;
+        }
+        else
+        {
+            user.isEditing = true;
+        }
+    }
+
+    private async void SubmitChanges()
+    {
+        PasswordHasher hasher = new PasswordHasher();
+        user.HashedPassword = hasher.GetHashPasswords(user.HashedPassword);
+        await UserService.PatchUserInfo(user);
+
+    }
+
+    private async void DeleteProfile()
+    {
+        count++;
+        if (count == 1)
+        {
+            message = "This will delete you profile";
+        }
+        if (count == 2)
+        {
+            message = "Are you sure?";
+        }
+        if (count == 3)
+        {
+            message = "Last chance.";
+        }
+        if (count == 4)
+        {
+            count = 0;
+            message = "Deleted";
+
+            await UserService.DeleteUser(user.Username);
+            PerformLogout();
+
+        }
+
+
+    }
+
+    private void PerformLogout()
+    {
+        try
+        {
+            ((CustomAuthentication)AuthenticationStateProvider).Logout();
+            NavigationManager.NavigateTo("/signUp");
+        }
+        catch (Exception e)
+        {
+        }
+    }
+
+}

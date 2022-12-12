@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -30,6 +31,23 @@ namespace ScSoMeBlazorServer.Network
             return await response.Content.ReadAsStringAsync();
         }
 
+        public async Task<string> patchToAPI(string path, Object PostObject)
+        {
+            string jsonObject = JsonSerializer.Serialize(PostObject);
+            HttpContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PatchAsync(client.BaseAddress + path, content);
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> deleteFromAPI(string path)
+        {
+            
+            HttpResponseMessage response = await client.DeleteAsync($"{client.BaseAddress}{path}");
+
+            return await response.Content.ReadAsStringAsync();
+        }
+       
 
     }
 }

@@ -4,20 +4,48 @@
 
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm backGroundColorNavBar border-bottom box-shadow mb-3">
     <div class="container">
-        <a class="navbar-brand" href="">
+        
+                <a class="navbar-brand" href="">
             <img class="logoIcon" src="Icons/Rocket.png">
         </a>
-        <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"><img class="profileIcon menuIcon" alt="user" src="Icons/MenuIcon.png"></span>
-        </button>
+                                    <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
+                                <span class="navbar-toggler-icon"><img class="profileIcon menuIcon" alt="user" src="Icons/MenuIcon.png"></span>
+                            </button>
+
+        <CascadingAuthenticationState>
+        <AuthorizeView>
+
+                <NotAuthorized>
+                    
+                    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+                    <ul class="navbar-nav searchBar">
+
+                    <div class="menu">
+
+                     <a class="menuItem" href="">login</a>
+                     <a class="menuItem" href="">signUp</a>
+                    </div>
+
+                    </ul>
+
+
+
+        </div>
+
+                </NotAuthorized> 
+            
+        <Authorized>
+            
+
 
         <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
             <ul class="navbar-nav searchBar">
 
                             <div class="menu">
-                                <a class="menuItem" href="">My Profile</a>
+                                <a class="menuItem" href="profilePage">My Profile</a>
                                 <a class="menuItem" href="Connections">My Connections</a>
                                 <a class="menuItem" href="Activities">My Activities</a>
+
                             </div>
             </ul>
             <ul class="navbar-nav flex-grow-1 searchBar">
@@ -36,7 +64,12 @@
             </ul>
 
 
-        </div>
+
+           </div>
+            </Authorized>
+        </AuthorizeView>
+        
+        </CascadingAuthenticationState>
 
     </div>
 

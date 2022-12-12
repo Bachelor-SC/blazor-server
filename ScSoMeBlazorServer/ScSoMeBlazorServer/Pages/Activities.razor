@@ -3,6 +3,7 @@
 @using ScSoMeBlazorServer.Models;
 @inject HttpClient client;
 @inject ILogActivityService ActivityService
+@attribute [Authorize]
 
 <PageTitle>Activities</PageTitle>
 

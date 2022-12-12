@@ -1,0 +1,91 @@
+﻿@page "/signUp"
+
+@using ScSoMeBlazorServer.Data.UserService;
+@using ScSoMeBlazorServer.Models.UserData;
+@using ScSoMeBlazorServer.Models;
+
+@using ScSoMeBlazorServer.Authentication;
+@using ScSoMeBlazorServer.Hasher;
+
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<h3>SignUp</h3>
+
+
+<EditForm Model="userInfo" OnValidSubmit="SubmitUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <input type="text" placeholder="Username" @bind-value="userInfo.Username">
+    </div>
+
+    <div class="form-group">
+        <input type="text" placeholder="Password" @bind-value="userInfo.HashedPassword">
+    </div>
+
+    <div class="form-group">
+        <input type="text" placeholder="Address" @bind-value="location.Address">
+    </div>
+
+    <div class="form-group">
+        <input type="number" placeholder="Postal code" @bind-value="location.PostalCode">
+    </div>
+
+    <div class="form-group">
+        <input type="text" placeholder="City" @bind-value="location.City">
+    </div>
+
+    <div class="form-group">
+        <input type="text" placeholder="Phone number" @bind-value="userInfo.Phonenumber">
+    </div>
+
+    <div class="form-group">
+        <input type="text" placeholder="Email" @bind-value="userInfo.Email">
+    </div>
+
+    <div class="form-group">
+        <input type="text" placeholder="(Company link)" @bind-value="exLink.Link">
+    </div>
+
+    <button class="btn btn-outline-dark" type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private UserInfo userInfo = new UserInfo();
+    private Location location = new Location();
+    private ExternalLink exLink = new ExternalLink();
+    private SocialMedia soMe = new SocialMedia("","","","");
+
+
+
+    PasswordHasher hasher = new PasswordHasher();
+
+    public async void SubmitUser()
+    {
+        soMe.Username = userInfo.Username;
+        location.Username = userInfo.Username;
+        exLink.Username = userInfo.Username;
+
+        userInfo.Description = "";
+        userInfo.CoverPicture = "https://cdn.pixabay.com/photo/2022/11/29/15/18/sunset-7624720_960_720.jpg";
+        userInfo.ProfilePicture = "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG.png";
+
+
+        userInfo.SubscriptionLevel = 1;
+        userInfo.Location = location;
+        userInfo.SocialMedia = soMe;
+        userInfo.ExternalLinks = exLink;
+
+        userInfo.HashedPassword = hasher.GetHashPasswords(userInfo.HashedPassword);
+        await UserService.PostCreateUser(userInfo);
+        await ((CustomAuthentication)AuthenticationStateProvider).ValidateLogin(userInfo.Username, userInfo.HashedPassword);
+
+        NavigationManager.NavigateTo("/ProfilePage");
+
+    }
+
+}
