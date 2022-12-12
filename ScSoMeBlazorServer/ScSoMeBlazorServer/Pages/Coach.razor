@@ -1,0 +1,66 @@
+﻿@page "/CoachPage/{username}"
+@using ScSoMeBlazorServer.Data.CoachService;
+
+@inject ICoachService coachService;
+
+<PageTitle>Counter</PageTitle>
+
+<div class="container" style="margin-left:0">
+    <div class="row">
+        <div class="col-6">
+            @{
+                if (coach != null)
+                {
+                    <img height="300" width="300" src="@coach.picture" class="col-auto rounded-circle" alt="profile picture">
+                }
+                else
+                {
+                    <div></div>
+                }
+            }
+
+            <br />
+            @{
+                if (coach != null)
+                {
+                    <h3>@coach.name</h3>
+                    <p>@coach.shortDesc</p>
+                }
+                else
+                {
+                    <div></div>
+                }
+            }
+
+        </div>
+        <div class="col-6">
+            <h1>Bio</h1>
+            @{
+                if (coach != null)
+                {
+                    <div>@coach.content</div>
+                }
+                else
+                {
+                    <div></div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string username { get; set; }
+    Models.Coach coach;
+    string _message = "";
+    string _email = "";
+    string _phone = "";
+    string _biography = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        coach = await coachService.GetCoach(username);
+    }
+
+}

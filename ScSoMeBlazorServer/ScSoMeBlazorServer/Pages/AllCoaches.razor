@@ -1,0 +1,69 @@
+﻿@page "/AllCoaches"
+@using ScSoMeBlazorServer.Data.CoachService;
+@using ScSoMeBlazorServer.Data.ConnectionService;
+@using ScSoMeBlazorServer.Models;
+@inject HttpClient client;
+@inject ICoachService CoachService
+@inject NavigationManager UriHelper;
+
+<PageTitle>Coaches</PageTitle>
+
+<h1>Vores Coaches</h1>
+@if (coaches == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="container paddingRemove">
+        <div class="row">
+            @foreach (Models.Coach coach in coaches)
+            {
+                <div class="col-3 " style="max-width:100%; margin-top:5px">
+                    @if (coach != null)
+                    {
+                        <img style="" height="100" width="100" src="@coach.picture" class="col-auto rounded-circle" alt="profile picture">
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+
+                    <br />
+                    @if (coach != null)
+                    {
+                        <h3>@coach.name</h3>
+                        <p style="margin:0px">@coach.shortDesc</p>
+                        <button class="btn btn-primary" @onclick="@(e => visitPage(coach))">Se Profil</button>
+                        <br />
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+                </div>
+            }
+            </div>
+        </div>
+        
+}
+
+
+@code {
+    List<Models.Coach> coaches;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        coaches = await CoachService.GetCoaches();
+    }
+
+    private void visitPage(Models.Coach coach)
+    {
+        UriHelper.NavigateTo("CoachPage/" + coach.username);
+    }
+
+
+}

@@ -1,55 +1,76 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">ScSoMeBlazorServer</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm backGroundColorNavBar border-bottom box-shadow mb-3">
+    <div class="container">
+        <a class="navbar-brand" href="">
+            <img class="logoIcon" src="Icons/Rocket.png">
+        </a>
+        <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"><img class="profileIcon menuIcon" alt="user" src="Icons/MenuIcon.png"></span>
+        </button>
+
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <ul class="navbar-nav searchBar">
+
+                            <div class="menu">
+                                <a class="menuItem" href="">My Profile</a>
+                                <a class="menuItem" href="Connections">My Connections</a>
+                                <a class="menuItem" href="Activities">My Activities</a>
+                            </div>
+            </ul>
+            <ul class="navbar-nav flex-grow-1 searchBar">
+
+                <div class="menu">
+                    <a class="menuItem" href="AllCoaches">Coaches</a>
+                </div>
+                <li class="nav-item navSearchItem">
+                    <form id="form" @onsubmit="OnChange">
+                        <input type="search" id="query" name="q" placeholder="Search..." @oninput="@((arg) => ExecuteFilter(arg))">
+                        <button class="Button2" type="submit">Search</button>
+                    </form>
+                </li>
+
+
+            </ul>
+
+
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="QR">
-                <span class="oi oi-plus" aria-hidden="true"></span> QR Generator
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="activities">
-                <span class="oi oi-plus" aria-hidden="true"></span> My Activities
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="connections">
-                <span class="oi oi-plus" aria-hidden="true"></span> My Connections
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
-</div>
+
+    </div>
+
+</nav>
+
 
 @code {
-    private bool collapseNavMenu = true;
+    bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    string searchField = "";
+    
+    string baseMenuClass = "navbar-collapse d-sm-inline-flex flex-sm-row-reverse";
 
-    private void ToggleNavMenu()
+    string NavMenuCssClass => baseMenuClass + (collapseNavMenu ? " collapse" : "");
+
+    void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    
+    private void OnChange()
+    {
+        NavigationManager.NavigateTo($"/SearchPage/{searchField}");
+    }
+    
+    
+    
+    private void ExecuteFilter(ChangeEventArgs changeEventArgs)
+    {
+        if (changeEventArgs.Value != null)
+        {
+            searchField = changeEventArgs.Value.ToString();
+        }
+
     }
 
 }
