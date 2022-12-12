@@ -1,0 +1,37 @@
+﻿@page "/QR"
+@using Net.Codecrete.QrCodeGenerator;
+@using System.Text;
+
+
+
+<PageTitle>QRCode</PageTitle>
+
+<h1>QR Generator</h1>
+
+
+
+<button class="btn btn-primary" @onclick="GenerateQRCode">Click me</button>
+
+@if (QRImage != null)
+{
+    <p>QR code has been created and saved</p>
+}
+
+@code {
+    private string QRImage;
+    private string user = "username";// swap for real user later
+    string SaveLoc;
+
+
+    private void GenerateQRCode()
+    {
+
+        var qr = QrCode.EncodeText("https://localhost:5001/user/abc", QrCode.Ecc.Medium);
+        QRImage = qr.ToSvgString(1000,"black","white");
+        string SaveLoc = $"{user}.svg";
+        File.WriteAllText(SaveLoc, QRImage, Encoding.UTF8);
+
+
+    }
+
+}
