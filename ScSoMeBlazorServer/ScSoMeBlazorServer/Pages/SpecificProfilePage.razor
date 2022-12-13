@@ -21,6 +21,15 @@
                 <em>Loading...</em>
             </p>
         }
+        else if (blockStatus == "blocked you")
+        {
+            <p>This user has blocked you so you cannot see their profile</p>
+        }
+        else if (blockStatus == "you blocked")
+        {
+            <p>You have blocked this user and cannot see their profile</p>
+            <button @onclick="() => Unblock(user.Username)">Unblock</button>
+        }
 
         else
         {
@@ -102,11 +111,20 @@
                 @if (clicked)
                 {
                     <button disabled>Added</button>
+                    <button @onclick="() => RemoveConnection(user.Username)">Remove Connection</button>
+                    <button @onclick="() => AddBlock(user.Username)">Block user</button>
+
                 }
                 else
                 {
                     <button @onclick="() => AddConnection(user.Username)">Add Connection</button>
+                    <button @onclick="() => AddBlock(user.Username)">Block user</button>
                 }
+            }
+            else
+            {
+                <button @onclick="() => RemoveConnection(user.Username)">Remove Connection</button>
+                <button @onclick="() => AddBlock(user.Username)">Block user</button>
             }
 
 
@@ -133,11 +151,13 @@
     private int count;
     private string usernameCached = CustomAuthentication.cachedUser.Username;
     private bool alreadyConnected;
+    private string blockStatus;
 
     protected override async Task OnInitializedAsync()
     {
         user = await UserService.GetUserInfo(username);
         alreadyConnected = await ConnectionService.CheckIfAlreadyConnected(usernameCached, username);
+        blockStatus = await ConnectionService.CheckIfBlocked(usernameCached, username);
 
     }
 
@@ -145,6 +165,25 @@
     {
         clicked = true;
         ConnectionService.AddConnection(usernameCached, connectionUsername);
+    }
+
+
+    private void AddBlock(string connectionUsername)
+    {
+
+        ConnectionService.AddBlock(usernameCached, connectionUsername);
+        
+    }
+
+    private void RemoveConnection(string connectionUsername)
+    {
+        clicked = false;
+        ConnectionService.DeleteConnection(usernameCached, connectionUsername);
+    }
+    private void Unblock(string connectionUsername)
+    {
+
+        ConnectionService.DeleteBlock(usernameCached, connectionUsername);
     }
 
 }
