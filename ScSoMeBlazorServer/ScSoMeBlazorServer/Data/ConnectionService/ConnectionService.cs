@@ -46,6 +46,7 @@ namespace ScSoMeBlazorServer.Data.ConnectionService
             }, activityTargetusername);
         }
 
+
         public async Task<List<Connection>> GetAllConnections(string username)
         {
             string json = await client.getFromAPI($"Connections/AllConnections?user={username}");
