@@ -47,7 +47,19 @@ namespace ScSoMeBlazorServer.Network
 
             return await response.Content.ReadAsStringAsync();
         }
-       
+
+        public async Task<string> deleteFromAPI(string path,Object PostObject)
+        {
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"{client.BaseAddress}{path}");
+            string jsonObject = JsonSerializer.Serialize(PostObject);
+
+            HttpContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+            requestMessage.Content = content;
+            HttpResponseMessage response = await client.SendAsync(requestMessage);
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
 
     }
 }

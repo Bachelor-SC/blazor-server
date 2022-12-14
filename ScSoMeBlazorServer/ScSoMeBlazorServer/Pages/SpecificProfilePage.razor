@@ -1,0 +1,189 @@
+﻿@page "/profilePage/{username}"
+@using ScSoMeBlazorServer.Data.ConnectionService
+@using ScSoMeBlazorServer.Models.UserData
+@using ScSoMeBlazorServer.Data.UserService;
+@using ScSoMeBlazorServer.Authentication;
+@using ScSoMeBlazorServer.Hasher;
+
+@attribute [Authorize]
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IConnectionService ConnectionService;
+
+
+<CascadingAuthenticationState>
+
+    <AuthorizeView>
+        @if (user == null)
+        {
+            <p>
+                <em>Loading...</em>
+            </p>
+        }
+        else if (blockStatus == "blocked you")
+        {
+            <p>This user has blocked you so you cannot see their profile</p>
+        }
+        else if (blockStatus == "you blocked")
+        {
+            <p>You have blocked this user and cannot see their profile</p>
+            <button @onclick="() => Unblock(user.Username)">Unblock</button>
+        }
+
+        else
+        {
+            <div class="container" style="margin-left:0">
+                <div class="row">
+
+                    <div class="col-6">
+
+                        <img height="300" width="300" src="@user.ProfilePicture" class="col-auto rounded-circle" alt="profile picture">
+
+
+                    </div>
+                </div>
+                <img height="300" width="300" src="@user.CoverPicture" class="col-auto rounded-circle" alt="profile picture">
+
+                <div class="form-group">
+                    <p> @user.Username"</p>
+                </div>
+
+                <div class="form-group">
+                    <p> @user.Location.Address"</p>
+
+                </div>
+
+                <div class="form-group">
+                    <p> @user.Location.PostalCode"</p>
+
+                </div>
+
+                <div class="form-group">
+                    <p> @user.Location.City"</p>
+
+                </div>
+
+                <div class="form-group">
+                    <p> @user.Phonenumber"</p>
+
+                </div>
+
+                <div class="form-group">
+                    <p> @user.Email"</p>
+
+                </div>
+
+                <div class="form-group">
+                    <p> @user.ExternalLinks.Link"</p>
+
+                </div>
+
+
+                <table>
+                    <tr>
+                        <th>SocialMedias</th>
+                    </tr>
+                    <tr>
+                        <td>@user.SocialMedia.Instagram</td>
+                    </tr>
+                    <tr>
+                        <td>@user.SocialMedia.Facebook</td>
+                    </tr>
+                    <tr>
+                        <td>@user.SocialMedia.LinkedIn</td>
+                    </tr>
+                </table>
+
+                <table>
+                    <tr>
+                        <th>ExternalLink</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            @user.ExternalLinks.Link"
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            @if (!alreadyConnected)
+            {
+                @if (clicked)
+                {
+                    <button disabled>Added</button>
+                    <button @onclick="() => RemoveConnection(user.Username)">Remove Connection</button>
+                    <button @onclick="() => AddBlock(user.Username)">Block user</button>
+
+                }
+                else
+                {
+                    <button @onclick="() => AddConnection(user.Username)">Add Connection</button>
+                    <button @onclick="() => AddBlock(user.Username)">Block user</button>
+                }
+            }
+            else
+            {
+                <button @onclick="() => RemoveConnection(user.Username)">Remove Connection</button>
+                <button @onclick="() => AddBlock(user.Username)">Block user</button>
+            }
+
+
+
+
+
+        }
+
+
+
+
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+
+@code {
+    [Parameter]
+    public string username { get; set; }
+    private bool clicked = false;
+    private UserInfo user;
+    private string message;
+    private int count;
+    private string usernameCached = CustomAuthentication.cachedUser.Username;
+    private bool alreadyConnected;
+    private string blockStatus;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserService.GetUserInfo(username);
+        alreadyConnected = await ConnectionService.CheckIfAlreadyConnected(usernameCached, username);
+        blockStatus = await ConnectionService.CheckIfBlocked(usernameCached, username);
+
+    }
+
+    private void AddConnection(string connectionUsername)
+    {
+        clicked = true;
+        ConnectionService.AddConnection(usernameCached, connectionUsername);
+    }
+
+
+    private void AddBlock(string connectionUsername)
+    {
+
+        ConnectionService.AddBlock(usernameCached, connectionUsername);
+        
+    }
+
+    private void RemoveConnection(string connectionUsername)
+    {
+        clicked = false;
+        ConnectionService.DeleteConnection(usernameCached, connectionUsername);
+    }
+    private void Unblock(string connectionUsername)
+    {
+
+        ConnectionService.DeleteBlock(usernameCached, connectionUsername);
+    }
+
+}
