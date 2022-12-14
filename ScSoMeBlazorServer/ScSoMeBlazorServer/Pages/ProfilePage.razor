@@ -49,6 +49,9 @@
                     <div class="form-group">
                         <input type="password" placeholder="Password" @bind-value="user.HashedPassword">
                     </div>
+                    <div class="form-group">
+                        <input type="textbox" placeholder="Description" @bind-value="user.Description">
+                    </div>
 
                     <div class="form-group">
                         <input type="text" placeholder="Address" @bind-value="user.Location.Address">
@@ -133,6 +136,11 @@
 
                     <div class="form-group">
                         <p> @user.HashedPassword"</p>
+
+                    </div>
+
+                    <div class="form-group">
+                        <p> @user.Description"</p>
 
                     </div>
 
