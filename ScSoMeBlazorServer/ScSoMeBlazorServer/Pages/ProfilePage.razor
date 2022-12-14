@@ -3,6 +3,8 @@
 @using ScSoMeBlazorServer.Data.UserService;
 @using ScSoMeBlazorServer.Authentication;
 @using ScSoMeBlazorServer.Hasher;
+@using Net.Codecrete.QrCodeGenerator;
+@using System.Text;
 
 @attribute [Authorize]
 @inject IUserService UserService
@@ -41,7 +43,7 @@
 
 
                     <div class="form-group">
-                       <!-- <input type="text" placeholder="Username" @bind-value="user.Username">-->
+                        <!-- <input type="text" placeholder="Username" @bind-value="user.Username">-->
                         <p> @user.Username"</p>
 
                     </div>
@@ -50,7 +52,7 @@
                         <input type="password" placeholder="Password" @bind-value="user.HashedPassword">
                     </div>
                     <div class="form-group">
-                        <input type="textbox" placeholder="Description" @bind-value="user.Description">
+                        <input type="textarea" placeholder="Description" @bind-value="user.Description">
                     </div>
 
                     <div class="form-group">
@@ -133,11 +135,21 @@
                     <div class="form-group">
                         <p> @user.Username"</p>
                     </div>
+                    <button class="btn btn-primary" @onclick="GenerateQRCode">generate qr code</button>
 
-                    <div class="form-group">
-                        <p> @user.HashedPassword"</p>
+                    @if (QRImage != null)
+                    {
+                        <p>QR code has been created and saved</p>
+                        @if (QRcodeLoc != "")
+                        {
+                            <img src=@QRcodeLoc alt="QRCode" width="300px">
+                        }
+                        
+                    }
 
-                    </div>
+
+
+                   
 
                     <div class="form-group">
                         <p> @user.Description"</p>
@@ -213,7 +225,7 @@
 
             }
 
-            
+
         }
 
 
@@ -226,9 +238,13 @@
 
 
 @code {
+
+    private string QRImage;
+    private string SaveLoc = "";
     private UserInfo user;
     private string message;
     private int count;
+    private string QRcodeLoc = "";
     private string passCache = CustomAuthentication.cachedUser.HashedPassword;
 
     [CascadingParameter]
@@ -299,6 +315,17 @@
             PerformLogout();
 
         }
+
+
+    }
+    private void GenerateQRCode()
+    {
+
+        var qr = QrCode.EncodeText($"https://localhost:5001/user/{user.Username.Replace(" ","%20")}", QrCode.Ecc.Medium);
+        QRImage = qr.ToSvgString(3, "black", "white");
+        SaveLoc = $"wwwroot/images/{user.Username.Replace(" ","")}.svg";
+        QRcodeLoc = $"images/{user.Username.Replace(" ","")}.svg";
+        File.WriteAllText(SaveLoc, QRImage, Encoding.UTF8);
 
 
     }
