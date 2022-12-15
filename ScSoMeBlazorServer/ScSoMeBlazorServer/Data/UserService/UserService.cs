@@ -1,4 +1,6 @@
-﻿using ScSoMeBlazorServer.Models.UserData;
+﻿using ScSoMeBlazorServer.Data.LogActivityService;
+using ScSoMeBlazorServer.Models;
+using ScSoMeBlazorServer.Models.UserData;
 using ScSoMeBlazorServer.Network;
 using System;
 using System.IO;
@@ -10,9 +12,11 @@ namespace ScSoMeBlazorServer.Data.UserService
     public class UserService : IUserService
     {
         private readonly IAPIClient client;
+        private ILogActivityService activityService;
 
-        public UserService(IAPIClient client)
+        public UserService(IAPIClient client, ILogActivityService logActivity)
         {
+            activityService = logActivity;
             this.client = client;
         }
 
@@ -47,11 +51,26 @@ namespace ScSoMeBlazorServer.Data.UserService
         public async Task PatchUserInfo(UserInfo user)
         {
             await client.patchToAPI($"User/Patch?user={user}", user);
+            await logActivity(user.Username, "profile"); //Should specify what
+
         }
 
         public async Task PostCreateUser(UserInfo userInfo)
         {
             await client.postToAPI($"User/Signup?user={userInfo}", userInfo);
+        }
+
+        private async Task logActivity(string username, string update)
+        {
+            await activityService.LogActivity(new Activity
+            {
+                type = "Profile update",
+                action = "update",
+                date = DateTime.Now,
+                additionalInfo = $"The user {username} has updated {update}",
+                username = username
+
+            }, username);
         }
 
     }
