@@ -17,7 +17,7 @@ namespace ScSoMeBlazorServer.Network
 
         public async Task<string> getFromAPI(string path)
         {
-            HttpResponseMessage response = await client.GetAsync(client.BaseAddress + path);
+            HttpResponseMessage response = await client.GetAsync(path);
 
             return await response.Content.ReadAsStringAsync();
         }
@@ -26,7 +26,7 @@ namespace ScSoMeBlazorServer.Network
         {
             string jsonObject = JsonSerializer.Serialize(PostObject);
             HttpContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await client.PostAsync(client.BaseAddress + path,content);
+            HttpResponseMessage response = await client.PostAsync(path,content);
 
             return await response.Content.ReadAsStringAsync();
         }
@@ -35,7 +35,7 @@ namespace ScSoMeBlazorServer.Network
         {
             string jsonObject = JsonSerializer.Serialize(PostObject);
             HttpContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await client.PatchAsync(client.BaseAddress + path, content);
+            HttpResponseMessage response = await client.PatchAsync(path, content);
 
             return await response.Content.ReadAsStringAsync();
         }
@@ -43,14 +43,14 @@ namespace ScSoMeBlazorServer.Network
         public async Task<string> deleteFromAPI(string path)
         {
             
-            HttpResponseMessage response = await client.DeleteAsync($"{client.BaseAddress}{path}");
+            HttpResponseMessage response = await client.DeleteAsync($"{path}");
 
             return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<string> deleteFromAPI(string path,Object PostObject)
         {
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"{client.BaseAddress}{path}");
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"{path}");
             string jsonObject = JsonSerializer.Serialize(PostObject);
 
             HttpContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");

@@ -10,7 +10,6 @@
       <None Include="wwwroot\Icons\HumanIcon.png" />
       <None Include="wwwroot\Icons\MenuIcon.png" />
       <None Include="wwwroot\Icons\Rocket.png" />
-      <None Include="wwwroot\images\Willywonka.svg" />
     </ItemGroup>
 
     <ItemGroup>
