@@ -8,7 +8,7 @@
 
 <PageTitle>Connections</PageTitle>
 
-<h1>Activities</h1>
+<h1>Connections</h1>
 @if (connections == null)
 {
     <p>
@@ -20,7 +20,7 @@ else
     <div class="container paddingRemove">
         <div class="row">
             <div class="col-md-12">
-                <h3>My Activities</h3>
+                <h3>My Connections</h3>
             </div>
         </div>
         <div class="row border-bottom border-dark rowStyle">
@@ -50,8 +50,6 @@ else
     {
 
         connections = await ConnectionService.GetAllConnections(usernameCached);//TODO: Add user connected when users implemented
-        //add connection test
-        await ConnectionService.AddConnection(usernameCached, "connectionTest2");
     }
 
 
