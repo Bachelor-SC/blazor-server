@@ -105,6 +105,7 @@ namespace ScSoMeBlazorServer.Data.ConnectionService
             };
 
             await client.postToAPI($"Connections/AddBlock", con);
+            await DeleteConnection(username,connectionUsername);
             await logBlockActivity(username, connectionUsername,"blocked");
             
 
